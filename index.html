@@ -15,38 +15,74 @@ body {
 }
 
 h1 {
-  margin: 20px 0 10px;
+  margin: 18px 0 5px;
+}
+
+.info {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.called {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 15px;
+  min-height: 35px;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
+  gap: 5px;
   max-width: 360px;
-  margin: 20px auto;
-  padding: 10px;
+  margin: 10px auto 20px;
+  padding: 8px;
+}
+
+.header {
+  background: #f59e0b;
+  color: #111;
+  font-weight: bold;
+  padding: 10px 0;
+  border-radius: 6px;
 }
 
 .cell {
   background: white;
   color: #111;
-  padding: 18px 5px;
-  border-radius: 8px;
-  font-size: 20px;
+  padding: 16px 3px;
+  border-radius: 7px;
+  font-size: 18px;
   font-weight: bold;
 }
 
+.cell.marked {
+  background: #22c55e;
+  color: white;
+}
+
 .free {
-  background: gold;
+  background: #facc15;
 }
 
 button {
-  padding: 15px 30px;
-  font-size: 20px;
+  padding: 14px 25px;
+  margin: 5px;
+  font-size: 18px;
   font-weight: bold;
   border: none;
   border-radius: 10px;
   cursor: pointer;
+}
+
+#callBtn {
+  background: #ef4444;
+  color: white;
+}
+
+#newBtn {
+  background: #3b82f6;
+  color: white;
 }
 </style>
 </head>
@@ -54,38 +90,170 @@ button {
 <body>
 
 <h1>🎱 VAMMOS BINGO</h1>
-<p>Stake: 20 ETB</p>
+
+<div class="info">Entry: 20 ETB</div>
+
+<div class="called" id="called">
+  Ready
+</div>
 
 <div class="board" id="board"></div>
 
-<button onclick="newGame()">NEW GAME</button>
+<button id="callBtn" onclick="callNumber()">CALL NUMBER</button>
+<button id="newBtn" onclick="newGame()">NEW GAME</button>
 
 <script>
+
 let board = document.getElementById("board");
+let called = document.getElementById("called");
+
+let numbers = [];
+let calledNumbers = [];
+
+function randomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function createColumn(min, max) {
+  let result = [];
+
+  while (result.length < 5) {
+    let n = randomNumber(min, max);
+
+    if (!result.includes(n)) {
+      result.push(n);
+    }
+  }
+
+  return result;
+}
 
 function createBoard() {
+
   board.innerHTML = "";
 
-  for (let i = 1; i <= 25; i++) {
-    let cell = document.createElement("div");
-    cell.className = "cell";
+  let columns = [
+    createColumn(1, 15),
+    createColumn(16, 30),
+    createColumn(31, 45),
+    createColumn(46, 60),
+    createColumn(61, 75)
+  ];
 
-    if (i === 13) {
-      cell.className += " free";
-      cell.innerText = "FREE";
-    } else {
-      cell.innerText = Math.floor(Math.random() * 75) + 1;
+  let letters = ["B", "I", "N", "G", "O"];
+
+  for (let c = 0; c < 5; c++) {
+
+    let header = document.createElement("div");
+    header.className = "header";
+    header.innerText = letters[c];
+
+    board.appendChild(header);
+  }
+
+  for (let row = 0; row < 5; row++) {
+
+    for (let col = 0; col < 5; col++) {
+
+      let cell = document.createElement("div");
+      cell.className = "cell";
+
+      if (row === 2 && col === 2) {
+
+        cell.className += " free";
+        cell.innerText = "FREE";
+
+      } else {
+
+        cell.innerText = columns[col][row];
+
+        cell.onclick = function() {
+
+          if (
+            calledNumbers.includes(
+              Number(cell.innerText)
+            )
+          ) {
+            cell.classList.toggle("marked");
+          }
+
+        };
+
+      }
+
+      board.appendChild(cell);
     }
-
-    board.appendChild(cell);
   }
 }
 
+function callNumber() {
+
+  let available = [];
+
+  for (let i = 1; i <= 75; i++) {
+
+    if (!calledNumbers.includes(i)) {
+      available.push(i);
+    }
+
+  }
+
+  if (available.length === 0) {
+
+    called.innerText = "All numbers called!";
+    return;
+
+  }
+
+  let index = randomNumber(0, available.length - 1);
+  let number = available[index];
+
+  calledNumbers.push(number);
+
+  let letter;
+
+  if (number <= 15) {
+    letter = "B";
+  } else if (number <= 30) {
+    letter = "I";
+  } else if (number <= 45) {
+    letter = "N";
+  } else if (number <= 60) {
+    letter = "G";
+  } else {
+    letter = "O";
+  }
+
+  called.innerText = letter + " - " + number;
+
+  highlightCalledNumber(number);
+}
+
+function highlightCalledNumber(number) {
+
+  let cells = document.querySelectorAll(".cell");
+
+  cells.forEach(function(cell) {
+
+    if (Number(cell.innerText) === number) {
+      cell.classList.add("marked");
+    }
+
+  });
+
+}
+
 function newGame() {
+
+  calledNumbers = [];
+  called.innerText = "Ready";
+
   createBoard();
+
 }
 
 createBoard();
+
 </script>
 
 </body>
