@@ -100,7 +100,8 @@ button {
 <div class="board" id="board"></div>
 
 <button id="callBtn" onclick="callNumber()">CALL NUMBER</button>
-<button id="newBtn" onclick="newGame()">NEW GAME</button>
+<button id="newBtn" onclick="newGame()">NEW GAME</button><button onclick="startAutoCall()">START AUTO CALL</button>
+<button onclick="stopAutoCall()">STOP</button>
 
 <script>
 
@@ -243,7 +244,20 @@ function highlightCalledNumber(number) {
 
 }
 
-function newGame() {
+function newGame() {let autoCallTimer;
+
+function startAutoCall() {
+  clearInterval(autoCallTimer);
+  callNumber();
+
+  autoCallTimer = setInterval(function() {
+    callNumber();
+  }, 5000);
+}
+
+function stopAutoCall() {
+  clearInterval(autoCallTimer);
+}
 
   calledNumbers = [];
   called.innerText = "Ready";
