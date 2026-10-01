@@ -244,7 +244,13 @@ function highlightCalledNumber(number) {
 
 }
 
-function newGame() {let autoCallTimer;
+function newGame() {function newGame() {
+  calledNumbers = [];
+  called.innerText = "Ready";
+  createBoard();
+}
+
+let autoCallTimer;
 
 function startAutoCall() {
   clearInterval(autoCallTimer);
@@ -257,6 +263,7 @@ function startAutoCall() {
 
 function stopAutoCall() {
   clearInterval(autoCallTimer);
+}
 }
 
   calledNumbers = [];
