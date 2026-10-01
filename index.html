@@ -1,1 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vammos Bingo</title>
 
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111827;
+  color: white;
+  text-align: center;
+}
+
+h1 {
+  margin: 20px 0 10px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  max-width: 360px;
+  margin: 20px auto;
+  padding: 10px;
+}
+
+.cell {
+  background: white;
+  color: #111;
+  padding: 18px 5px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.free {
+  background: gold;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎱 VAMMOS BINGO</h1>
+<p>Stake: 20 ETB</p>
+
+<div class="board" id="board"></div>
+
+<button onclick="newGame()">NEW GAME</button>
+
+<script>
+let board = document.getElementById("board");
+
+function createBoard() {
+  board.innerHTML = "";
+
+  for (let i = 1; i <= 25; i++) {
+    let cell = document.createElement("div");
+    cell.className = "cell";
+
+    if (i === 13) {
+      cell.className += " free";
+      cell.innerText = "FREE";
+    } else {
+      cell.innerText = Math.floor(Math.random() * 75) + 1;
+    }
+
+    board.appendChild(cell);
+  }
+}
+
+function newGame() {
+  createBoard();
+}
+
+createBoard();
+</script>
+
+</body>
+</html>
