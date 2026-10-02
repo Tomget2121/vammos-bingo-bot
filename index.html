@@ -226,24 +226,7 @@ function callNumber() {
 
   highlightCalledNumber(number);
 }
-
-function highlightCalledNumber(number) {function checkBingo() {
-
-  let cells = document.querySelectorAll(".cell");
-
-  let marked = [];
-
-  cells.forEach(function(cell) {
-    if (cell.classList.contains("marked")) {
-      marked.push(cell);
-    }
-  });
-
-  if (marked.length >= 5) {
-    called.innerText = "🎉 BINGO! 🎉";
-    stopAutoCall();
-checkBingo();  }
-}
+function highlightCalledNumber(number) {
 
   let cells = document.querySelectorAll(".cell");
 
@@ -254,6 +237,107 @@ checkBingo();  }
     }
 
   });
+
+  checkBingo();
+}
+
+
+function checkBingo() {
+
+  let cells = document.querySelectorAll(".cell");
+  let marked = [];
+
+  cells.forEach(function(cell) {
+    marked.push(
+      cell.classList.contains("marked") ||
+      cell.classList.contains("free")
+    );
+  });
+
+  // ወደ ጎን
+  for (let row = 0; row < 5; row++) {
+
+    let bingo = true;
+
+    for (let col = 0; col < 5; col++) {
+      if (!marked[row * 5 + col]) {
+        bingo = false;
+        break;
+      }
+    }
+
+    if (bingo) {
+      bingoWon();
+      return;
+    }
+  }
+
+  // ወደ ታች
+  for (let col = 0; col < 5; col++) {
+
+    let bingo = true;
+
+    for (let row = 0; row < 5; row++) {
+      if (!marked[row * 5 + col]) {
+        bingo = false;
+        break;
+      }
+    }
+
+    if (bingo) {
+      bingoWon();
+      return;
+    }
+  }
+
+  // ቀኝ ወደ ግራ መአዘን
+  let diagonal1 = true;
+
+  for (let i = 0; i < 5; i++) {
+    if (!marked[i * 5 + i]) {
+      diagonal1 = false;
+      break;
+    }
+  }
+
+  if (diagonal1) {
+    bingoWon();
+    return;
+  }
+
+  // ግራ ወደ ቀኝ መአዘን
+  let diagonal2 = true;
+
+  for (let i = 0; i < 5; i++) {
+    if (!marked[i * 5 + (4 - i)]) {
+      diagonal2 = false;
+      break;
+    }
+  }
+
+  if (diagonal2) {
+    bingoWon();
+    return;
+  }
+
+  // አራቱ ማዕዘኖች
+  if (
+    marked[0] &&
+    marked[4] &&
+    marked[20] &&
+    marked[24]
+  ) {
+    bingoWon();
+    return;
+  }
+}
+
+
+function bingoWon() {
+
+  called.innerText = "🎉 BINGO! 🎉";
+  stopAutoCall();
+
 }
 
 function startAutoCall() {
