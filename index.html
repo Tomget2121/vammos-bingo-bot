@@ -14,9 +14,7 @@ body {
   text-align: center;
 }
 
-h1 {
-  margin: 18px 0 5px;
-}
+h1 { margin: 18px 0 5px; }
 
 .info {
   font-size: 18px;
@@ -24,10 +22,10 @@ h1 {
 }
 
 .called {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: bold;
   margin: 15px;
-  min-height: 35px;
+  min-height: 40px;
 }
 
 .board {
@@ -66,13 +64,12 @@ h1 {
 }
 
 button {
-  padding: 14px 25px;
+  padding: 14px 20px;
   margin: 5px;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: bold;
   border: none;
   border-radius: 10px;
-  cursor: pointer;
 }
 
 #callBtn {
@@ -84,6 +81,16 @@ button {
   background: #3b82f6;
   color: white;
 }
+
+#startBtn {
+  background: #22c55e;
+  color: white;
+}
+
+#stopBtn {
+  background: #f97316;
+  color: white;
+}
 </style>
 </head>
 
@@ -93,23 +100,22 @@ button {
 
 <div class="info">Entry: 20 ETB</div>
 
-<div class="called" id="called">
-  Ready
-</div>
+<div class="called" id="called">Ready</div>
 
 <div class="board" id="board"></div>
 
 <button id="callBtn" onclick="callNumber()">CALL NUMBER</button>
-<button id="newBtn" onclick="newGame()">NEW GAME</button><button onclick="startAutoCall()">START AUTO CALL</button>
-<button onclick="stopAutoCall()">STOP</button>
+<button id="newBtn" onclick="newGame()">NEW GAME</button>
+<button id="startBtn" onclick="startAutoCall()">START AUTO CALL</button>
+<button id="stopBtn" onclick="stopAutoCall()">STOP</button>
 
 <script>
 
 let board = document.getElementById("board");
 let called = document.getElementById("called");
 
-let numbers = [];
 let calledNumbers = [];
+let autoCallTimer = null;
 
 function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -144,11 +150,9 @@ function createBoard() {
   let letters = ["B", "I", "N", "G", "O"];
 
   for (let c = 0; c < 5; c++) {
-
     let header = document.createElement("div");
     header.className = "header";
     header.innerText = letters[c];
-
     board.appendChild(header);
   }
 
@@ -170,16 +174,13 @@ function createBoard() {
 
         cell.onclick = function() {
 
-          if (
-            calledNumbers.includes(
-              Number(cell.innerText)
-            )
-          ) {
+          let n = Number(cell.innerText);
+
+          if (calledNumbers.includes(n)) {
             cell.classList.toggle("marked");
           }
 
         };
-
       }
 
       board.appendChild(cell);
@@ -192,22 +193,18 @@ function callNumber() {
   let available = [];
 
   for (let i = 1; i <= 75; i++) {
-
     if (!calledNumbers.includes(i)) {
       available.push(i);
     }
-
   }
 
   if (available.length === 0) {
-
-    called.innerText = "All numbers called!";
+    called.innerText = "ALL NUMBERS CALLED!";
+    stopAutoCall();
     return;
-
   }
 
-  let index = randomNumber(0, available.length - 1);
-  let number = available[index];
+  let number = available[randomNumber(0, available.length - 1)];
 
   calledNumbers.push(number);
 
@@ -241,19 +238,12 @@ function highlightCalledNumber(number) {
     }
 
   });
-
 }
-
-function newGame() {function newGame() {
-  calledNumbers = [];
-  called.innerText = "Ready";
-  createBoard();
-}
-
-let autoCallTimer;
 
 function startAutoCall() {
-  clearInterval(autoCallTimer);
+
+  stopAutoCall();
+
   callNumber();
 
   autoCallTimer = setInterval(function() {
@@ -262,15 +252,22 @@ function startAutoCall() {
 }
 
 function stopAutoCall() {
-  clearInterval(autoCallTimer);
-}
+
+  if (autoCallTimer !== null) {
+    clearInterval(autoCallTimer);
+    autoCallTimer = null;
+  }
 }
 
+function newGame() {
+
+  stopAutoCall();
+
   calledNumbers = [];
+
   called.innerText = "Ready";
 
   createBoard();
-
 }
 
 createBoard();
