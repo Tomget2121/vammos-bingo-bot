@@ -227,7 +227,23 @@ function callNumber() {
   highlightCalledNumber(number);
 }
 
-function highlightCalledNumber(number) {
+function highlightCalledNumber(number) {function checkBingo() {
+
+  let cells = document.querySelectorAll(".cell");
+
+  let marked = [];
+
+  cells.forEach(function(cell) {
+    if (cell.classList.contains("marked")) {
+      marked.push(cell);
+    }
+  });
+
+  if (marked.length >= 5) {
+    called.innerText = "🎉 BINGO! 🎉";
+    stopAutoCall();
+checkBingo();  }
+}
 
   let cells = document.querySelectorAll(".cell");
 
